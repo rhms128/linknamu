@@ -5,14 +5,6 @@ export type ClickDoc = {
   count: number;
 };
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error(
-    "MONGODB_URI 환경 변수가 없습니다. .env.local을 확인하고 dev 서버를 재시작하세요.",
-  );
-}
-
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
@@ -22,8 +14,8 @@ declare global {
 // 전역에 캐시해두지 않으면 커넥션이 계속 쌓여 Atlas 연결 수 제한에 걸린다.
 let clientPromise: Promise<MongoClient> | undefined = global._mongoClientPromise;
 
-function connect(): Promise<MongoClient> {
-  return new MongoClient(uri as string).connect().catch((error) => {
+function connect(uri: string): Promise<MongoClient> {
+  return new MongoClient(uri).connect().catch((error) => {
     // 실패한 Promise를 캐시에 남기면 이후 모든 요청이 같은 에러를 그대로 재사용한다.
     // (예: Atlas 비밀번호를 고쳐도 서버를 재시작할 때까지 계속 인증 실패)
     // 캐시를 비워 다음 요청에서 새로 연결을 시도하게 한다.
@@ -34,8 +26,18 @@ function connect(): Promise<MongoClient> {
 }
 
 export async function getClicksCollection(): Promise<Collection<ClickDoc>> {
+  // 환경 변수는 모듈 평가 시점이 아니라 요청 시점에 확인한다.
+  // 최상단에서 throw 하면 빌드가 이 모듈을 읽는 것만으로 실패한다.
+  // (Vercel에 MONGODB_URI를 넣기 전에는 배포 자체가 깨진다)
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error(
+      "MONGODB_URI 환경 변수가 없습니다. 로컬은 .env.local, 배포 환경은 Vercel의 Environment Variables를 확인하세요.",
+    );
+  }
+
   if (!clientPromise) {
-    clientPromise = connect();
+    clientPromise = connect(uri);
     if (process.env.NODE_ENV !== "production") {
       global._mongoClientPromise = clientPromise;
     }
