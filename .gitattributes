@@ -1,0 +1,12 @@
+# 저장소에도, 작업 폴더에도 LF로 통일한다.
+# (Windows의 core.autocrlf=true가 체크아웃할 때 CRLF로 바꾸는 것을 막는다)
+* text=auto eol=lf
+
+# 바이너리는 줄바꿈 변환 대상이 아니다.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.svg text eol=lf
+*.ico binary
+*.woff binary
+*.woff2 binary
