@@ -1,17 +1,31 @@
+import { CARD_CLASS, CARD_EN_CLASS } from "./cardStyle";
+
 type LinkCardProps = {
   title: string;
+  titleEn: string;
   url: string;
+  emoji: string;
 };
 
-export default function LinkCard({ title, url }: LinkCardProps) {
+export default function LinkCard({
+  title,
+  titleEn,
+  url,
+  emoji,
+}: LinkCardProps) {
+  // mailto: 같은 링크는 새 탭으로 열 필요가 없다.
+  const isExternal = url.startsWith("http");
+
   return (
     <a
       href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block w-full rounded-2xl border border-black/10 px-5 py-4 text-center text-sm font-medium transition-colors hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className={CARD_CLASS}
     >
+      <span aria-hidden="true">{emoji}</span>
       {title}
+      <span className={CARD_EN_CLASS}>({titleEn})</span>
     </a>
   );
 }

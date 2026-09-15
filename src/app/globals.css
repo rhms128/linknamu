@@ -2,24 +2,133 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * 레알 마드리드 팀컬러: 화이트 + 로열블루 + 골드.
+ * 흰색 단독으로 두면 밋밋해서, 위에서 아래로 블루가 스며들고
+ * 우측 상단에 골드 헤일로를 얹어 두 색이 섞이게 했다.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f8fd;
+  --foreground: #0e2a5a;
+  --muted: #5c77a3;
+
+  --page-gradient:
+    radial-gradient(
+      90rem 42rem at 85% -12%,
+      rgba(254, 190, 16, 0.18),
+      transparent 62%
+    ),
+    linear-gradient(170deg, #ffffff 0%, #f3f7fd 42%, #dde8f8 100%);
+
+  --card-bg: rgba(255, 255, 255, 0.62);
+  --card-bg-hover: rgba(255, 255, 255, 0.84);
+  --card-border: rgba(0, 82, 159, 0.12);
+  --card-border-hover: rgba(200, 162, 74, 0.5);
+  --card-shadow: 0 1px 2px rgba(11, 31, 78, 0.05),
+    0 8px 24px -12px rgba(11, 31, 78, 0.2);
+  --card-shadow-hover: 0 1px 2px rgba(11, 31, 78, 0.06),
+    0 14px 30px -14px rgba(11, 31, 78, 0.3);
+
+  --avatar-ring: rgba(255, 255, 255, 0.92);
+  --avatar-ring-accent: rgba(200, 162, 74, 0.55);
+  --avatar-shadow: 0 18px 38px -16px rgba(11, 31, 78, 0.45);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #071022;
+  --foreground: #eaf1ff;
+  --muted: #9db3d6;
+
+  --page-gradient:
+    radial-gradient(
+      90rem 42rem at 85% -12%,
+      rgba(254, 190, 16, 0.14),
+      transparent 62%
+    ),
+    linear-gradient(170deg, #071022 0%, #0b1c3d 52%, #10254f 100%);
+
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-bg-hover: rgba(255, 255, 255, 0.1);
+  --card-border: rgba(255, 255, 255, 0.13);
+  --card-border-hover: rgba(254, 190, 16, 0.38);
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25),
+    0 8px 24px -14px rgba(0, 0, 0, 0.55);
+  --card-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.3),
+    0 14px 30px -14px rgba(0, 0, 0, 0.65);
+
+  --avatar-ring: rgba(255, 255, 255, 0.14);
+  --avatar-ring-accent: rgba(254, 190, 16, 0.38);
+  --avatar-shadow: 0 18px 38px -16px rgba(0, 0, 0, 0.7);
+}
+
+html {
+  background: var(--background);
 }
 
 body {
+  min-height: 100vh;
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page-gradient) no-repeat fixed;
+  font-family:
+    "Pretendard Variable",
+    Pretendard,
+    var(--font-geist-sans),
+    system-ui,
+    -apple-system,
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    sans-serif;
+}
+
+@layer components {
+  /* 링크 카드 · 테마 버튼이 공유하는 글래스 표면 */
+  .glass-surface {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    transition-property: background-color, border-color, box-shadow, transform;
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* 호버는 살짝 떠오르면서 테두리에 골드가 도는 정도까지만 */
+  .glass-surface:hover {
+    background-color: var(--card-bg-hover);
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .glass-surface:active {
+    transform: translateY(0);
+  }
+
+  .avatar-frame {
+    box-shadow:
+      0 0 0 5px var(--avatar-ring),
+      0 0 0 7px var(--avatar-ring-accent),
+      var(--avatar-shadow);
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-muted {
+    color: var(--muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-surface {
+    transition-duration: 1ms;
+  }
+
+  .glass-surface:hover {
+    transform: none;
   }
 }

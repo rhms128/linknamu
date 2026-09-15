@@ -26,6 +26,12 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        {/* 한글/영문을 한 벌로 처리하는 둥근 산세리프. 동적 서브셋이라 필요한 글자만 받는다. */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+        />
         {/* 첫 페인트 전에 테마를 적용해 화면이 번쩍이는 것을 막는다. */}
         <script
           dangerouslySetInnerHTML={{

@@ -28,7 +28,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={isDark ? "밝은 화면으로 전환" : "어두운 화면으로 전환"}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 text-base transition-colors hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+      className="glass-surface flex h-10 w-10 items-center justify-center rounded-full text-base"
     >
       {mounted ? (isDark ? "☀️" : "🌙") : null}
     </button>

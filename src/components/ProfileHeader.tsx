@@ -19,10 +19,16 @@ export default function ProfileHeader({
         width={144}
         height={144}
         priority
-        className="h-36 w-36 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/15"
+        className="avatar-frame h-32 w-32 rounded-full object-cover sm:h-36 sm:w-36"
       />
-      <h1 className="mt-5 text-xl font-bold">{name}</h1>
-      <p className="mt-1 text-sm opacity-70">{bio}</p>
+      <h1 className="mt-7 text-2xl font-bold tracking-tight">{name}</h1>
+      {/*
+       * 항상 한 줄로 보이게 한다. 좁은 화면에서 넘치지 않도록
+       * 글자 크기를 화면 너비에 비례시키고, 위아래를 clamp로 묶었다.
+       */}
+      <p className="text-muted mt-2.5 whitespace-nowrap text-[clamp(0.625rem,2.85vw,0.8125rem)] leading-relaxed">
+        {bio}
+      </p>
     </header>
   );
 }
