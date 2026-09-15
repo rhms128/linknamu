@@ -1,8 +1,20 @@
-import { Collection, MongoClient } from "mongodb";
+import { Collection, Document, MongoClient } from "mongodb";
 
 export type ClickDoc = {
   _id: string;
   count: number;
+};
+
+/** 집계된 방문. _id는 `${링크 id}:${방문자 해시}`, TTL로 자동 삭제된다. */
+export type VisitDoc = {
+  _id: string;
+  at: Date;
+};
+
+/** 앱이 스스로 관리하는 설정값 (예: 방문자 해시용 솔트) */
+export type MetaDoc = {
+  _id: string;
+  value: string;
 };
 
 declare global {
@@ -25,7 +37,9 @@ function connect(uri: string): Promise<MongoClient> {
   });
 }
 
-export async function getClicksCollection(): Promise<Collection<ClickDoc>> {
+export async function getCollection<T extends Document>(
+  name: string,
+): Promise<Collection<T>> {
   // 환경 변수는 모듈 평가 시점이 아니라 요청 시점에 확인한다.
   // 최상단에서 throw 하면 빌드가 이 모듈을 읽는 것만으로 실패한다.
   // (Vercel에 MONGODB_URI를 넣기 전에는 배포 자체가 깨진다)
@@ -45,5 +59,9 @@ export async function getClicksCollection(): Promise<Collection<ClickDoc>> {
 
   const client = await clientPromise;
   // 접속 문자열에 /linknamu 가 들어 있으므로 db() 인자는 비워 둔다.
-  return client.db().collection<ClickDoc>("clicks");
+  return client.db().collection<T>(name);
 }
+
+export const getClicksCollection = () => getCollection<ClickDoc>("clicks");
+export const getVisitsCollection = () => getCollection<VisitDoc>("visits");
+export const getMetaCollection = () => getCollection<MetaDoc>("meta");

@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
 
+import { registerClick } from "@/lib/clicks";
 import { TRACKED_IDS } from "@/lib/links";
-import { getClicksCollection } from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * 방문자를 구분할 키. Vercel은 x-forwarded-for에 클라이언트 IP를 넣어 준다.
+ * 헤더가 없으면(로컬 등) 하나로 묶이므로, 그 환경에서는 사실상 전체가 1회로 집계된다.
+ */
+function visitorKeyOf(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return request.headers.get("x-real-ip")?.trim() || "unknown";
+}
+
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: { id: string } },
 ) {
   const { id } = params;
@@ -19,15 +29,8 @@ export async function POST(
   }
 
   try {
-    const collection = await getClicksCollection();
-    // 문서가 없으면 만들면서 1로 시작한다.
-    const doc = await collection.findOneAndUpdate(
-      { _id: id },
-      { $inc: { count: 1 } },
-      { upsert: true, returnDocument: "after" },
-    );
-
-    return NextResponse.json({ id, count: doc?.count ?? 1 });
+    const { count, counted } = await registerClick(id, visitorKeyOf(request));
+    return NextResponse.json({ id, count, counted });
   } catch (error) {
     console.error(`[clicks] '${id}' 클릭 수 증가 실패:`, error);
     return NextResponse.json(
