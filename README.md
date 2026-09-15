@@ -2,7 +2,7 @@
 
 내 모든 링크를 한 페이지에 모아두고, 하나의 URL로 공유하는 Link in Bio 서비스입니다.
 
-**배포 주소** — https://linknamu-murex.vercel.app/
+**배포 주소** — https://hyeseok-links.vercel.app/
 
 ## 기능
 
