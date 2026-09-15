@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 
 import { CARD_CLASS, CARD_EN_CLASS } from "./cardStyle";
+import ClickCount from "./ClickCount";
 
 type CopyEmailCardProps = {
   title: string;
   titleEn: string;
   emoji: string;
   email: string;
+  count: number;
+  onCounted: () => void;
 };
 
 export default function CopyEmailCard({
@@ -16,6 +19,8 @@ export default function CopyEmailCard({
   titleEn,
   emoji,
   email,
+  count,
+  onCounted,
 }: CopyEmailCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -27,6 +32,7 @@ export default function CopyEmailCard({
   }, [copied]);
 
   const copy = async () => {
+    onCounted();
     try {
       await navigator.clipboard.writeText(email);
       setCopied(true);
@@ -46,6 +52,7 @@ export default function CopyEmailCard({
       <span aria-hidden="true">{copied ? "✅" : emoji}</span>
       <span aria-live="polite">{copied ? "복사됨!" : title}</span>
       {!copied && <span className={CARD_EN_CLASS}>({titleEn})</span>}
+      <ClickCount value={count} />
     </button>
   );
 }
